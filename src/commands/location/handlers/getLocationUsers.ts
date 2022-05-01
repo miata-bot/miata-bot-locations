@@ -24,7 +24,7 @@ export default async function getLocationUsers(
     if (queryData.empty) {
       await interaction.reply({
         content: `There are no users in ${stateData.name}, ${stateData.countryName}.`,
-        ephemeral: true,
+        ephemeral: false,
       })
     } else {
       const userIds: string[] = []
@@ -42,7 +42,7 @@ export default async function getLocationUsers(
 
       await interaction.reply({
         embeds: [embed],
-        ephemeral: true,
+        ephemeral: false,
       })
     }
   }

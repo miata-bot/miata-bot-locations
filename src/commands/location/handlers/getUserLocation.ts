@@ -13,7 +13,7 @@ export default async function getUserLocation(interaction: CommandInteraction) {
   if (user.bot) {
     await interaction.reply({
       content: `${user} is inside your walls.`,
-      ephemeral: true,
+      ephemeral: false,
     })
   } else {
     const userLocationRef = db.collection(interaction.guildId).doc(userId)
@@ -23,7 +23,7 @@ export default async function getUserLocation(interaction: CommandInteraction) {
         content: `${
           value ? "This user hasn't" : "You haven't"
         } added a location yet.`,
-        ephemeral: true,
+        ephemeral: false,
       })
     } else {
       const data = userLocationDoc.data()
@@ -31,7 +31,7 @@ export default async function getUserLocation(interaction: CommandInteraction) {
         content: `${value ? `${user} is` : 'You are'} located in ${
           data.name
         }, ${data.countryName}.`,
-        ephemeral: true,
+        ephemeral: false,
       })
     }
   }
