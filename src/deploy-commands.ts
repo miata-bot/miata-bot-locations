@@ -20,4 +20,13 @@ if (process.env.NODE_ENV !== 'production') {
       console.log('Successfully registered guild application commands.'),
     )
     .catch(console.error)
+} else {
+  rest
+    .put(Routes.applicationCommands(process.env.APPLICATION_ID), {
+      body: commands,
+    })
+    .then(() =>
+      console.log('Successfully registered global application commands.'),
+    )
+    .catch(console.error)
 }
