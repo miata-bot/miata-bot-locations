@@ -8,11 +8,11 @@ export default async function getUserLocation(interaction: CommandInteraction) {
   let userId
   if (!value) userId = interaction.user.id
   else userId = value.id
-  const member = await interaction.guild.members.fetch(userId)
+  const user = await interaction.client.users.fetch(userId)
 
-  if (member.user.bot) {
+  if (user.bot) {
     await interaction.reply({
-      content: `${member.displayName} is inside your walls.`,
+      content: `${user} is inside your walls.`,
       ephemeral: true,
     })
   } else {
@@ -28,9 +28,9 @@ export default async function getUserLocation(interaction: CommandInteraction) {
     } else {
       const data = userLocationDoc.data()
       await interaction.reply({
-        content: `${
-          value ? `${member.displayName} is` : 'You are'
-        } located in ${data.name}, ${data.countryName}.`,
+        content: `${value ? `${user} is` : 'You are'} located in ${
+          data.name
+        }, ${data.countryName}.`,
       })
     }
   }

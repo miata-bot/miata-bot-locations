@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js'
+import { CommandInteraction, MessageEmbed, User } from 'discord.js'
 
 import { db } from '../../../utils/firebase/clients.js'
 import { getStateById } from '../../../utils/state-country/queries.js'
@@ -16,8 +16,6 @@ export default async function getLocationUsers(
       ephemeral: true,
     })
   else {
-    await interaction.deferReply({ ephemeral: true })
-
     const stateData = stateQueryResult[0]
     const ref = db.collection(interaction.guildId)
     const query = ref.where('id', '==', stateData.id)
@@ -29,12 +27,21 @@ export default async function getLocationUsers(
         ephemeral: true,
       })
     } else {
+      const userIds: string[] = []
+      queryData.forEach((result) => {
+        userIds.push(result.id)
+      })
+      const users: User[] = await Promise.all(
+        userIds.map(async (userId) => interaction.client.users.fetch(userId)),
+      )
+
+      const embed = new MessageEmbed()
+      embed
+        .setTitle(`Users in ${stateData.name}, ${stateData.countryName}`)
+        .setDescription(users.join('\n'))
+
       await interaction.reply({
-        content: `There ${queryData.size === 1 ? 'is' : 'are'} ${
-          queryData.size
-        } user${queryData.size > 1 ? 's' : ''} in ${stateData.name}, ${
-          stateData.countryName
-        }.`,
+        embeds: [embed],
         ephemeral: true,
       })
     }
