@@ -20,6 +20,7 @@ export default async function setLocation(interaction: CommandInteraction) {
       .set(stateQueryResult[0])
     await interaction.reply({
       content: `Your location has been set to ${stateQueryResult[0].name}, ${stateQueryResult[0].countryName}.`,
+      ephemeral: true,
     })
   }
 }

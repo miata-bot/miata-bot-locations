@@ -31,6 +31,7 @@ export default async function getUserLocation(interaction: CommandInteraction) {
         content: `${value ? `${user} is` : 'You are'} located in ${
           data.name
         }, ${data.countryName}.`,
+        ephemeral: true,
       })
     }
   }
