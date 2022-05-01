@@ -63,7 +63,7 @@ const locationCommand: Command = {
         'Command not run in a guild or guild is currently unavailable.',
       )
 
-    if (interaction.options.getSubcommandGroup()) {
+    if (interaction.options.getSubcommandGroup(false)) {
       switch (interaction.options.getSubcommandGroup()) {
         case 'get': {
           switch (interaction.options.getSubcommand()) {
