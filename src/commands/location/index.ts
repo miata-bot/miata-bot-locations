@@ -58,10 +58,8 @@ const locationCommand: Command = {
       subcommand.setName('delete').setDescription('Deletes your location'),
     ),
   async execute(interaction) {
-    if (!interaction.inGuild() || !interaction.guild.available)
-      throw new Error(
-        'Command not run in a guild or guild is currently unavailable.',
-      )
+    if (!interaction.inGuild())
+      throw new Error('Command must be run in a guild.')
 
     if (interaction.options.getSubcommandGroup(false)) {
       switch (interaction.options.getSubcommandGroup()) {
