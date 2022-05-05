@@ -20,7 +20,7 @@ export default async function setCountryLocation(
       .collection(interaction.guildId)
       .doc(interaction.member.user.id)
       .set({
-        countryId: countryQueryResult[0].id,
+        country_id: countryQueryResult[0].id,
         countryName: countryQueryResult[0].name,
       })
     await interaction.reply({
