@@ -7,10 +7,15 @@ function cleanInput(value) {
   return value.trim().toLowerCase().replace(/  +/g, ' ')
 }
 
+export function getCountryById(idValue) {
+  const cleanIdValue = cleanInput(idValue)
+  const countryIdQuery = `SELECT country.* FROM ? as country WHERE country.id="${cleanIdValue}"`
+  return alasql(countryIdQuery, [stateCountry.getAllCountries()])
+}
+
 export function getStateById(idValue) {
   const cleanIdValue = cleanInput(idValue)
-  const stateIdQuery =
-    'SELECT state.* FROM ? as state WHERE state.id="' + cleanIdValue + '"'
+  const stateIdQuery = `SELECT state.* FROM ? as state WHERE state.id="${cleanIdValue}"`
   const state = alasql(stateIdQuery, [stateCountry.getAllStates()])
 
   const stateCountryJoinQuery =

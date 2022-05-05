@@ -3,9 +3,11 @@ import { CommandInteraction } from 'discord.js'
 import { db } from '../../../utils/firebase/clients.js'
 import { getStateById } from '../../../utils/state-country/queries.js'
 
-export default async function setLocation(interaction: CommandInteraction) {
+export default async function setRegionLocation(
+  interaction: CommandInteraction,
+) {
   // `value` is not guaranteed to be a valid autocomplete option
-  const value = interaction.options.getString('location')
+  const value = interaction.options.getString('region')
   const stateQueryResult = getStateById(value)
 
   if (stateQueryResult.length !== 1)

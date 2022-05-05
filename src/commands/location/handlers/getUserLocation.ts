@@ -27,12 +27,22 @@ export default async function getUserLocation(interaction: CommandInteraction) {
       })
     } else {
       const data = userLocationDoc.data()
-      await interaction.reply({
-        content: `${value ? `${user} is` : 'You are'} located in ${
-          data.name
-        }, ${data.countryName}.`,
-        ephemeral: false,
-      })
+      // if the user has set a region
+      if (data.id) {
+        await interaction.reply({
+          content: `${value ? `${user} is` : 'You are'} located in ${
+            data.name
+          }, ${data.countryName}.`,
+          ephemeral: false,
+        })
+      } else {
+        await interaction.reply({
+          content: `${value ? `${user} is` : 'You are'} located in ${
+            data.countryName
+          }.`,
+          ephemeral: false,
+        })
+      }
     }
   }
 }

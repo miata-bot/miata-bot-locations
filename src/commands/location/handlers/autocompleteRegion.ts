@@ -4,7 +4,7 @@ import {
 } from 'discord.js'
 import stateCountry from 'state-country'
 
-function getLocationAutocompleteOptions(searchValue: string) {
+function getRegionLocationAutocompleteOptions(searchValue: string) {
   const results = stateCountry.searchStates(searchValue).slice(0, 25)
 
   return results.map(
@@ -15,10 +15,12 @@ function getLocationAutocompleteOptions(searchValue: string) {
   )
 }
 
-export default async function setLocationAutocomplete(
+export default async function autocompleteRegion(
   interaction: AutocompleteInteraction,
 ) {
   await interaction.respond(
-    getLocationAutocompleteOptions(interaction.options.getString('location')),
+    getRegionLocationAutocompleteOptions(
+      interaction.options.getString('region'),
+    ),
   )
 }

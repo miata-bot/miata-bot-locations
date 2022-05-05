@@ -2,11 +2,13 @@ import { SlashCommandBuilder } from '@discordjs/builders'
 
 import type { Command } from '../../types/commands'
 import {
+  handleCountryAutocompleteInteraction,
   handleDeleteLocationInteraction,
   handleGetLocationUsersInteraction,
   handleGetUserLocationInteraction,
-  handleSetLocationAutocompleteInteraction,
-  handleSetLocationInteraction,
+  handleRegionAutocompleteInteraction,
+  handleSetCountryLocationInteraction,
+  handleSetRegionLocationInteraction,
 } from './handlers/index.js'
 
 const locationCommand: Command = {
@@ -32,12 +34,21 @@ const locationCommand: Command = {
         .addSubcommand((subcommand) =>
           subcommand
             .setName('location')
-            .setDescription('Gets a list of users in a location')
+            .setDescription(
+              'Gets a list of users in a location (selecting a region will supersede a country selection)',
+            )
             .addStringOption((option) =>
               option
-                .setName('location')
+                .setName('region')
                 .setDescription('Region or state')
-                .setRequired(true)
+                .setRequired(false)
+                .setAutocomplete(true),
+            )
+            .addStringOption((option) =>
+              option
+                .setName('country')
+                .setDescription('Country')
+                .setRequired(false)
                 .setAutocomplete(true),
             ),
         ),
@@ -45,12 +56,21 @@ const locationCommand: Command = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName('set')
-        .setDescription('Sets your location')
+        .setDescription(
+          'Sets your location (selecting a region will supersede a country selection)',
+        )
         .addStringOption((option) =>
           option
-            .setName('location')
+            .setName('region')
             .setDescription('Region or state')
-            .setRequired(true)
+            .setRequired(false)
+            .setAutocomplete(true),
+        )
+        .addStringOption((option) =>
+          option
+            .setName('country')
+            .setDescription('Country')
+            .setRequired(false)
             .setAutocomplete(true),
         ),
     )
@@ -66,7 +86,17 @@ const locationCommand: Command = {
         case 'get': {
           switch (interaction.options.getSubcommand()) {
             case 'location': {
-              await handleGetLocationUsersInteraction(interaction)
+              if (
+                interaction.options.getString('region') ||
+                interaction.options.getString('country')
+              ) {
+                await handleGetLocationUsersInteraction(interaction)
+              } else {
+                await interaction.reply({
+                  content: 'Please specify a country or region.',
+                  ephemeral: true,
+                })
+              }
               break
             }
             case 'user': {
@@ -74,12 +104,22 @@ const locationCommand: Command = {
               break
             }
           }
+          break
         }
       }
     } else {
       switch (interaction.options.getSubcommand()) {
         case 'set': {
-          await handleSetLocationInteraction(interaction)
+          if (interaction.options.getString('region')) {
+            await handleSetRegionLocationInteraction(interaction)
+          } else if (interaction.options.getString('country')) {
+            await handleSetCountryLocationInteraction(interaction)
+          } else {
+            await interaction.reply({
+              content: 'Please specify a country or region.',
+              ephemeral: true,
+            })
+          }
           break
         }
         case 'delete': {
@@ -90,7 +130,44 @@ const locationCommand: Command = {
     }
   },
   async executeAutocomplete(interaction) {
-    await handleSetLocationAutocompleteInteraction(interaction)
+    if (interaction.options.getSubcommandGroup(false)) {
+      switch (interaction.options.getSubcommandGroup()) {
+        case 'get': {
+          switch (interaction.options.getSubcommand()) {
+            case 'location': {
+              switch (interaction.options.getFocused(true).name) {
+                case 'region': {
+                  await handleRegionAutocompleteInteraction(interaction)
+                  break
+                }
+                case 'country': {
+                  await handleCountryAutocompleteInteraction(interaction)
+                  break
+                }
+              }
+              break
+            }
+          }
+          break
+        }
+      }
+    } else {
+      switch (interaction.options.getSubcommand()) {
+        case 'set': {
+          switch (interaction.options.getFocused(true).name) {
+            case 'region': {
+              await handleRegionAutocompleteInteraction(interaction)
+              break
+            }
+            case 'country': {
+              await handleCountryAutocompleteInteraction(interaction)
+              break
+            }
+          }
+          break
+        }
+      }
+    }
   },
 }
 
