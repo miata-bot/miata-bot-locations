@@ -1,11 +1,24 @@
-import { Collection, Intents } from 'discord.js'
+import { ClientOptions, Collection, Intents } from 'discord.js'
 import 'dotenv/config'
 
 import location from './commands/location/index.js'
 import './deploy-commands.js'
 import Client from './utils/discord/Client.js'
 
-const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+const clientOptions: ClientOptions = {
+  intents: [Intents.FLAGS.GUILDS],
+}
+
+if (process.env.NODE_ENV === 'production') {
+  clientOptions.sweepers = {
+    messages: {
+      interval: 43200,
+      lifetime: 21600,
+    },
+  }
+}
+
+const client = new Client(clientOptions)
 
 client.commands = new Collection()
 client.commands.set(location.data.name, location)
